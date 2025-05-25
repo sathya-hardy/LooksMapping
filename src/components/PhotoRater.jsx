@@ -13,7 +13,7 @@ export default function PhotoRater({ value }) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        borderLeft: "1px solid #ddd",
+        borderTop: "1px solid #ddd",
       }}
     >
       <div

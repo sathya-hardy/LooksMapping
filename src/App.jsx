@@ -4,15 +4,17 @@ import { GoogleMap, LoadScript,  Marker, InfoWindow } from "@react-google-maps/a
 import Header from "./components/Header";
 import Slider from "./components/Slider";
 import PhotoRater from "./components/PhotoRater";
+import { AnimatePresence, motion } from "framer-motion";
+import Intro from './components/Intro';
 
 const containerStyle = {
   width: "100%",
-  height: "500px",
+  height: "750px",
 };
 
 const center = {
-  lat: 39.1696, 
-  lng: -86.5386,
+  lat: 41.8781, 
+  lng: -87.6298,
 };
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyADjFXK1y9E1ptQ7hbkbSoe78dpWwYsMlA";
@@ -21,13 +23,13 @@ function generateNearbyPoints(center, count = 100) {
   const points = [];
 
   for (let i = 0; i < count; i++) {
-    const latOffset = (Math.random() - 0.5) * 0.1;  // ~±0.05° (~5.5km)
+    const latOffset = (Math.random() - 0.5) * 0.1;
     const lngOffset = (Math.random() - 0.5) * 0.1;
 
     points.push({
       lat: center.lat + latOffset,
       lng: center.lng + lngOffset,
-      value: Math.floor(Math.random() * 10) + 1, // 1 to 10
+      value: Math.floor(Math.random() * 10) + 1,
     });
   }
 
@@ -42,15 +44,32 @@ const nearbyPoints = generateNearbyPoints(center, 100);
 
 function App() {
   const [value, setValue] = useState(5);
-   const filteredPoints = nearbyPoints.filter((pt) => pt.value === Number(value));
-   const [selectedPoint, setSelectedPoint] = useState(null);
    
+   const [selectedPoint, setSelectedPoint] = useState(null);
+   const [showIntro, setShowIntro] = useState(true);
+   const [sliderActive, setSliderActive] = useState(false);
+
+   const filteredPoints = sliderActive
+  ? nearbyPoints.filter((pt) => pt.value === Number(value))
+  : nearbyPoints;
 
   return (
-    <div className="flex flex-col w-full font-sans dark:bg-gray-900">
+    <AnimatePresence>
+      {showIntro ? (
+        <Intro onFinish={() => setShowIntro(false)} />
+      ) : (
+        <motion.div
+          key="main"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="flex flex-col w-full font-sans dark:bg-black"
+        >
+
       <Header />
       
-      <div className="flex gap-6 px-6 py-4">
+      <div className="flex w-full gap-6 px-6 py-4">
+         <div style={{ flex: "0 0 80%" }}>
       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
         <GoogleMap mapContainerStyle={containerStyle} 
         center={center} zoom={12}
@@ -59,9 +78,22 @@ function App() {
           map.setZoom(map.getZoom());
         });
       }}>
-         {filteredPoints.map((point, idx) => (
-            <Marker key={idx} position={{ lat: point.lat, lng: point.lng }} label={String(point.value)} onClick={() => setSelectedPoint(point)}/>
-          ))}
+         {filteredPoints.map((point, idx) => {
+            let icon;
+            if (point.value <= 3) {
+              icon = "https://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+            } else if (point.value <= 7) {
+              icon = "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
+            } else {
+              icon = "https://maps.google.com/mapfiles/ms/icons/red-dot.png";
+            }
+
+             return (
+            <Marker key={idx} position={{ lat: point.lat, lng: point.lng }} icon={{
+          url: icon,
+        }} onClick={() => setSelectedPoint(point)}/>
+      );
+      })}
           {selectedPoint && (
               <InfoWindow
                 position={{ lat: selectedPoint.lat, lng: selectedPoint.lng }}
@@ -81,39 +113,29 @@ function App() {
       </LoadScript>
       </div>
 
-      
-      {/* <div style={{ marginTop: "1rem" }}>
-        <label>
-          Value: {value}
-          <input
-            type="range"
-            min="1"
-            max="10"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            style={{ width: "100%" }}
-          />
-        </label>
-      </div> */}
       <div
       style={{
         display: "flex",
-        width: "100%",
-        maxWidth: 900,
+        flex: "0 0 20%",
+        flexDirection: "column",
         margin: "2rem auto",
         boxShadow: "0 0 10px rgba(0,0,0,0.1)",
         borderRadius: 8,
         overflow: "hidden",
+        gap: "1rem",
       }}
     >
-      <div style={{ width: "50%" }}>
-        <Slider value={value} setValue={setValue} />
+      <div style={{  flex: 1 }}>
+        <Slider value={value} setValue={setValue} sliderActive={sliderActive} setSliderActive={setSliderActive} />
       </div>
-      <div style={{ width: "50%" }}>
+      <div style={{  flex: 1 }}>
         <PhotoRater value={value} />
       </div>
     </div>
     </div>
+    </motion.div>
+    )}
+    </AnimatePresence>
     
   );
 }
