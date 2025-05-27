@@ -1,13 +1,8 @@
-import DarkModeToggle from "./DarkModeToggle";
 
 export default function Header() {
   return (
-    <header className="w-full bg-white shadow dark:bg-gray-800 px-6 py-4 mb-4 flex items-center justify-between">
-
-      <h1 className="text-2xl font-bold text-indigo-700 dark:text-indigo-200 mx-auto">
-        Looks Mapping
-      </h1>
-      <DarkModeToggle />
-    </header>
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-gray-800 text-indigo-200 shadow px-16 py-2 rounded-md">
+      <h1 className="text-lg font-semibold">FIND YOUR LEAGUE</h1>
+    </div>
   );
 }

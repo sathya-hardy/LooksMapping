@@ -3,13 +3,14 @@ import './App.css'
 import { GoogleMap, LoadScript,  Marker, InfoWindow } from "@react-google-maps/api";
 import Header from "./components/Header";
 import Slider from "./components/Slider";
+import DarkModeToggle  from "./components/DarkModeToggle";
 import PhotoRater from "./components/PhotoRater";
 import { AnimatePresence, motion } from "framer-motion";
 import Intro from './components/Intro';
 
 const containerStyle = {
   width: "100%",
-  height: "750px",
+  height: "100%",
 };
 
 const center = {
@@ -53,6 +54,13 @@ function App() {
   ? nearbyPoints.filter((pt) => pt.value === Number(value))
   : nearbyPoints;
 
+
+  const [filters, setFilters] = useState({
+        blue: true,
+        green: true,
+        red: true,
+      });
+
   return (
     <AnimatePresence>
       {showIntro ? (
@@ -67,9 +75,21 @@ function App() {
         >
 
       <Header />
+      {/* <DarkModeToggle /> */}
       
-      <div className="flex w-full gap-6 px-6 py-4">
-         <div style={{ flex: "0 0 80%" }}>
+      <div className="flex w-full gap-6">
+         <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+           
+            <button className="BlueButton" onClick={() => setFilters(f => ({ ...f, blue: !f.blue }))}>
+              {filters.blue ? "Hide" : "Show"} Blue
+            </button>
+            <button className="GreenButton" onClick={() => setFilters(f => ({ ...f, green: !f.green }))}>
+              {filters.green ? "Hide" : "Show"} Green
+            </button>
+            <button className="RedButton" onClick={() => setFilters(f => ({ ...f, red: !f.red }))} >
+              {filters.red ? "Hide" : "Show"} Red
+            </button>
+          
       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
         <GoogleMap mapContainerStyle={containerStyle} 
         center={center} zoom={12}
@@ -79,14 +99,18 @@ function App() {
         });
       }}>
          {filteredPoints.map((point, idx) => {
-            let icon;
+            let color;
             if (point.value <= 3) {
-              icon = "https://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+              color = "blue";
             } else if (point.value <= 7) {
-              icon = "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
+              color = "green";
             } else {
-              icon = "https://maps.google.com/mapfiles/ms/icons/red-dot.png";
+              color = "red";
             }
+
+            if (!filters[color]) return null;
+
+            let icon = `https://maps.google.com/mapfiles/ms/icons/${color}-dot.png`;
 
              return (
             <Marker key={idx} position={{ lat: point.lat, lng: point.lng }} icon={{
@@ -103,9 +127,34 @@ function App() {
                     pixelOffset: new window.google.maps.Size(0, -10),
                   }}
               >
-                <div>
-                <p className="mb-1"  style={{color:"black"}}><strong style={{color:"black"}}>Latitude:</strong> {selectedPoint.lat.toFixed(4)}</p>
-                <p className="mb-1"  style={{color:"black"}}><strong style={{color:"black"}}>Longitude:</strong> {selectedPoint.lng?.toFixed(4)}</p>
+                 <div style={{ color: "black" }}>
+                  <label htmlFor="hotness-slider" style={{ fontWeight: "bold" }}>
+                    Hotness: {selectedPoint.value}
+                  </label>
+                  <input
+                    type="range"
+                    id="hotness-slider"
+                    min="0"
+                    max="10"
+                    value={selectedPoint.value}
+                    readOnly
+                    style={{
+                      width: "100%",
+                      background: `linear-gradient(to right, 
+                        blue 0%, 
+                        green ${selectedPoint.value * 10}%, 
+                        red 100%)`,
+                      accentColor: selectedPoint.value <= 3
+                        ? "blue"
+                        : selectedPoint.value <= 7
+                        ? "green"
+                        : "red",
+                    }}
+                  />
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", marginTop: "4px" }}>
+                    <span>Not Hot</span>
+                    <span>Hot</span>
+                  </div>
                 </div>
               </InfoWindow>
             )}
@@ -113,19 +162,9 @@ function App() {
       </LoadScript>
       </div>
 
-      <div
-      style={{
-        display: "flex",
-        flex: "0 0 20%",
-        flexDirection: "column",
-        margin: "2rem auto",
-        boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-        borderRadius: 8,
-        overflow: "hidden",
-        gap: "1rem",
-      }}
+      <div className='Sidebar'
     >
-      <div style={{  flex: 1 }}>
+      <div style={{  flex: 1, paddingBottom:"3rem"  }}>
         <Slider value={value} setValue={setValue} sliderActive={sliderActive} setSliderActive={setSliderActive} />
       </div>
       <div style={{  flex: 1 }}>

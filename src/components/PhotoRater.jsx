@@ -22,6 +22,7 @@ export default function PhotoRater({ value }) {
           fontSize: 18,
           marginBottom: 12,
           textAlign: "center",
+          color: "black"
         }}
       >
         RATE YOUR OWN PHOTO!

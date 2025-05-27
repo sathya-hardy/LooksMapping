@@ -5,7 +5,7 @@ export default function Slider({ value, setValue, sliderActive, setSliderActive 
     <div
       style={{
         width: "100%",
-        padding: 20,
+        padding: 70,
         boxSizing: "border-box",
         marginLeft: "auto",
         marginRight: "auto",
@@ -35,6 +35,7 @@ export default function Slider({ value, setValue, sliderActive, setSliderActive 
               marginBottom: 12,
               fontWeight: "500",
               textAlign: "center",
+              color: "black"
             }}
           >
             Value:{" "}
@@ -74,7 +75,7 @@ export default function Slider({ value, setValue, sliderActive, setSliderActive 
               onClick={() => setSliderActive(false)}
               style={{
                 padding: "6px 12px",
-                backgroundColor: "#aaa",
+                backgroundColor: "#db1e5d",
                 color: "#fff",
                 border: "none",
                 borderRadius: 20,

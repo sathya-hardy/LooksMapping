@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 const Intro = ({ onFinish }) => {
   const [step, setStep] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const timers = [
@@ -14,6 +15,20 @@ const Intro = ({ onFinish }) => {
     ];
     return () => timers.forEach(clearTimeout);
   }, [onFinish]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 2; // increase speed here (e.g., +5 is faster)
+      });
+    }, 100); // controls speed of updates
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
   <div className="flex items-center justify-center w-full h-screen bg-black">
@@ -34,14 +49,24 @@ const Intro = ({ onFinish }) => {
         {step === 1 && (
           <motion.p
             key="loading"
-            className="text-sm mt-4 text-gray-400 font-mono"
+            className="text-sm mt-4 text-cyan-300 font-mono"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1 }}
           >
             Loading your experience...
-          </motion.p>
+          
+          <motion.span
+          key="progress"
+          className="block text-sm mt-2 text-cyan-300"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {progress}%
+        </motion.span>
+        </motion.p>
         )}
       </AnimatePresence>
     </div>
