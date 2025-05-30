@@ -7,6 +7,8 @@ import DarkModeToggle  from "./components/DarkModeToggle";
 import PhotoRater from "./components/PhotoRater";
 import { AnimatePresence, motion } from "framer-motion";
 import Intro from './components/Intro';
+import Sidebar from './components/Sidebar'; 
+import restaurantData from './data/chicago_restaurants.json';
 
 const containerStyle = {
   width: "100%",
@@ -17,6 +19,13 @@ const center = {
   lat: 41.8781, 
   lng: -87.6298,
 };
+
+const processedPoints = restaurantData.map(item => ({
+  name: item.name,
+  lat: item.geometry.location.lat,
+  lng: item.geometry.location.lng,
+  value: Math.floor(Math.random() * 10) + 1,
+}));
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyADjFXK1y9E1ptQ7hbkbSoe78dpWwYsMlA";
 
@@ -51,8 +60,8 @@ function App() {
    const [sliderActive, setSliderActive] = useState(false);
 
    const filteredPoints = sliderActive
-  ? nearbyPoints.filter((pt) => pt.value === Number(value))
-  : nearbyPoints;
+  ? processedPoints.filter((pt) => pt.value === Number(value))
+  : processedPoints;
 
 
   const [filters, setFilters] = useState({
@@ -128,6 +137,7 @@ function App() {
                   }}
               >
                  <div style={{ color: "black" }}>
+                  <h1>{selectedPoint.name}</h1>
                   <label htmlFor="hotness-slider" style={{ fontWeight: "bold" }}>
                     Hotness: {selectedPoint.value}
                   </label>
@@ -162,15 +172,17 @@ function App() {
       </LoadScript>
       </div>
 
-      <div className='Sidebar'
-    >
+      {/* <div className='Sidebar'>
       <div style={{  flex: 1, paddingBottom:"3rem"  }}>
         <Slider value={value} setValue={setValue} sliderActive={sliderActive} setSliderActive={setSliderActive} />
       </div>
       <div style={{  flex: 1 }}>
         <PhotoRater value={value} />
       </div>
-    </div>
+    </div> */}
+    <Sidebar value={value} setValue={setValue} sliderActive={sliderActive} setSliderActive={setSliderActive} />
+    
+
     </div>
     </motion.div>
     )}
