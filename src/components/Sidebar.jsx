@@ -1,11 +1,12 @@
 import Slider from './Slider'
 import PhotoRater from './PhotoRater'
+import Search from './Search';
 
-export default function Sidebar({ value, setValue, sliderActive, setSliderActive }) {
+export default function Sidebar({ value, setValue, sliderActive, setSliderActive,  originalPoints, setSearchResult }) {
   const styles = {
     sidebar: {
       position: 'absolute',
-      top: '12rem',
+      top: '6rem',
       right: '3rem',
       width: '300px',
       background: 'rgba(255, 255, 255, 0.51)',
@@ -20,17 +21,24 @@ export default function Sidebar({ value, setValue, sliderActive, setSliderActive
       gap: '1rem',
       border: '1px solid rgba(255, 255, 255, 0.44)',
     },
+    searchContainer: {
+      flex: 1,
+      paddingBottom: '3rem',
+    },
     sliderContainer: {
       flex: 1,
       paddingBottom: '3rem',
     },
     raterContainer: {
       flex: 1,
+      
     }
+    
   }
 
   return (
     <div style={styles.sidebar}>
+      <Search originalPoints={originalPoints} setSearchResult={setSearchResult} />
       <div style={styles.sliderContainer}>
         <Slider
           value={value}

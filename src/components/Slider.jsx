@@ -10,6 +10,7 @@ export default function Slider({ value, setValue, sliderActive, setSliderActive 
         marginLeft: "auto",
         marginRight: "auto",
         textAlign: "center",
+        borderTop: "1px solid #ddd",
       }}
     >
       {!sliderActive ? (

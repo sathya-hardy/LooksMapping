@@ -29,39 +29,19 @@ const processedPoints = restaurantData.map(item => ({
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyADjFXK1y9E1ptQ7hbkbSoe78dpWwYsMlA";
 
-function generateNearbyPoints(center, count = 100) {
-  const points = [];
-
-  for (let i = 0; i < count; i++) {
-    const latOffset = (Math.random() - 0.5) * 0.1;
-    const lngOffset = (Math.random() - 0.5) * 0.1;
-
-    points.push({
-      lat: center.lat + latOffset,
-      lng: center.lng + lngOffset,
-      value: Math.floor(Math.random() * 10) + 1,
-    });
-  }
-
-  return points;
-}
-
-const nearbyPoints = generateNearbyPoints(center, 100);
-
-// export default function App() {
-//   return <h1>Hello, world!</h1>;
-// }
-
 function App() {
   const [value, setValue] = useState(5);
    
    const [selectedPoint, setSelectedPoint] = useState(null);
    const [showIntro, setShowIntro] = useState(true);
    const [sliderActive, setSliderActive] = useState(false);
+   const [searchResult, setSearchResult] = useState(null);
 
-   const filteredPoints = sliderActive
-  ? processedPoints.filter((pt) => pt.value === Number(value))
-  : processedPoints;
+  const filteredPoints = searchResult
+  ? [searchResult] 
+  : sliderActive
+    ? processedPoints.filter((pt) => pt.value === Number(value))
+    : processedPoints;
 
 
   const [filters, setFilters] = useState({
@@ -180,7 +160,7 @@ function App() {
         <PhotoRater value={value} />
       </div>
     </div> */}
-    <Sidebar value={value} setValue={setValue} sliderActive={sliderActive} setSliderActive={setSliderActive} />
+    <Sidebar value={value} setValue={setValue} sliderActive={sliderActive} setSliderActive={setSliderActive} originalPoints={processedPoints} setSearchResult={setSearchResult}/>
     
 
     </div>
@@ -190,6 +170,6 @@ function App() {
     
   );
 }
-// style="color:black"
+
 
 export default App
